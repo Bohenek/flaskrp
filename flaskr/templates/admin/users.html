@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Manage Users{% endblock %}</h1>
+  <a class="action" href="{{ url_for('admin.add_user') }}">Add New User</a>
+{% endblock %}
+
+{% block content %}
+  {% if users %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Is Admin?</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user_item in users %} {# Zmieniono nazwę zmiennej, aby uniknąć konfliktu z globalnym g.user #}
+        <tr>
+          <td>{{ user_item['id'] }}</td>
+          <td>{{ user_item['username'] }}</td>
+          <td>{{ 'Yes' if user_item['is_admin'] else 'No' }}</td>
+          <td>
+            {# Admin nie może usunąć samego siebie z tej listy, chyba że jest inny admin #}
+            {# Uproszczone: admin nie może usunąć siebie #}
+            {% if user_item['id'] != g.user['id'] %}
+              <form action="{{ url_for('admin.delete_user', id=user_item['id']) }}" method="post" style="display:inline;">
+                <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this user? This will also delete all their posts.');">
+              </form>
+            {% else %}
+              (Current Admin)
+            {% endif %}
+            {# TODO: Można dodać link do edycji użytkownika, np. zmiana statusu admina, reset hasła #}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No other users found.</p>
+  {% endif %}
+{% endblock %}

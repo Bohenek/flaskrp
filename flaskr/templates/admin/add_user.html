@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Add New User{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="username">Username</label>
+    <input name="username" id="username" value="{{ request.form['username'] }}" required>
+
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" required>
+
+    <label for="is_admin">
+        <input type="checkbox" name="is_admin" id="is_admin" value="true" {% if request.form.get( 'is_admin' ) %}checked{% endif %}>
+        Make Administrator
+    </label>
+    <input type="submit" value="Add User">
+  </form>
+  <p><a href="{{ url_for('admin.list_users') }}">Back to User List</a></p>
+{% endblock %}
